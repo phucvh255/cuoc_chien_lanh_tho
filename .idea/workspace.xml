@@ -2,30 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d4d8561f-2992-419f-8bf6-65f4d502262b" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Agent.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Ai3.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Ai4.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Ai5.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Buffer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai/Buffer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Experience.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai/Experience.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ai/Model.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ai/Model2.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ai/Model2.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Frame.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Frame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/company/Panel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Panel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/company/Parameter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/company/Parameter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/map/Map.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/map/Map.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/ai/Ai3.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/ai/Ai4.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/ai/Ai5.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/company/Board.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/company/Board.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/company/Frame.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/company/Frame.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/company/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/company/Main.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/company/Panel.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/company/Panel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/com/company/Parameter.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/com/company/Parameter.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/target/classes/map/Map.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/map/Map.class" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -139,6 +119,7 @@
       <workItem from="1574850601070" duration="1156000" />
       <workItem from="1575245329302" duration="1653000" />
       <workItem from="1575279888215" duration="925000" />
+      <workItem from="1575283308673" duration="273000" />
     </task>
     <servers />
   </component>

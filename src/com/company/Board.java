@@ -49,7 +49,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
         } else {
             this.setFirstTurn(this.green);
         }
-
     }
 
     public Board(Map m) throws IOException {
@@ -67,7 +66,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
         } else {
             this.setFirstTurn(this.red);
         }
-
     }
 
     private void setFirstTurn(Player p) {
@@ -133,11 +131,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    try {
-                        this.ai_red.model.backup_model();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
                 } else {
                     this.changeTurn();
                 }
@@ -150,11 +143,6 @@ public class Board extends JPanel implements KeyListener, ActionListener {
                     this.finished = true;
                     try {
                         this.ai_red.model.save_model();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    try {
-                        this.ai_red.model.backup_model();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

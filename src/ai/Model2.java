@@ -25,7 +25,6 @@ public class Model2 {
     private int inputDim;
     private int outputDim;
     private int numOfLabels;
-    private int count = 0;
     private ComputationGraphConfiguration config;
     private ComputationGraph net;
 
@@ -91,10 +90,9 @@ public class Model2 {
     public void save_model() throws IOException {
         File locationToSave = new File("G:/Project/java/CCLT/src/ai/MyComputationGraph2.zip");
         net.save(locationToSave, true);
-        count++;
     }
 
-    public void backup_model() throws IOException {
+    public void backup_model(int count) throws IOException {
         if(count % 10 == 0 && count != 0){
             int numOfBackUp = count / 10;
             String fileName = "G:/Project/java/CCLT/src/ai/MyComputationGraphBackUp" + Integer.toString(numOfBackUp) + ".zip";

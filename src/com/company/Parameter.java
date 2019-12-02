@@ -27,6 +27,7 @@ public class Parameter {
     private Ai ai_green;
     private boolean finished = false;
     private int redCount = 0;
+    private int count;
 
     public Parameter() throws FileNotFoundException {
         this.map = new Map("/lib/map.txt");
@@ -42,7 +43,7 @@ public class Parameter {
 
     }
 
-    public Parameter(Map m, int [] para) throws IOException {
+    public Parameter(Map m, int [] para, int count) throws IOException {
         this.ai_green = new Ai();
         this.ai_red = new Ai2();
         this.map = m;
@@ -50,6 +51,7 @@ public class Parameter {
         this.green = new GreenPlayer(0, 0, this.map);
         this.map.setGreen(0, 0);
         this.map.setRed(14, 14);
+        this.count = count;
         if ((new Random()).nextInt(2) == 1) {
             this.setFirstTurn(this.green);
         } else {
@@ -84,7 +86,7 @@ public class Parameter {
                     this.redCount++;
                     this.finished = true;
                     this.ai_red.model.save_model();
-                    this.ai_red.model.backup_model();
+                    this.ai_red.model.backup_model(count);
                 } else {
                     this.changeTurn();
                 }
@@ -95,7 +97,7 @@ public class Parameter {
                 if (!this.red.goable(this.map)) {
                     this.finished = true;
                     this.ai_red.model.save_model();
-                    this.ai_red.model.backup_model();
+                    this.ai_red.model.backup_model(count);
                 } else {
                     this.changeTurn();
                 }

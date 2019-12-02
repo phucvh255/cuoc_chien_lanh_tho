@@ -34,7 +34,7 @@ public class Main {
                 redWin = 0;
                 while (count < 10) {
                     NewMap map = new NewMap();
-                    Parameter game = new Parameter(map.getMap(), parameter);
+                    Parameter game = new Parameter(map.getMap(), parameter, count);
                     redWin += game.play();
                     count++;
                     System.out.println(redWin + " - " + (count - redWin));
@@ -56,7 +56,7 @@ public class Main {
             int max = 0;
             while (count < 10) {
                 NewMap map = new NewMap();
-                Parameter game = new Parameter(map.getMap(), parameter);
+                Parameter game = new Parameter(map.getMap(), parameter, count);
                 redWin += game.play();
                 count++;
                 System.out.println(redWin + " - " + (count - redWin));
