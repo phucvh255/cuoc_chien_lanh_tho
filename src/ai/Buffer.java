@@ -14,7 +14,7 @@ public class Buffer {
         numOfBuffer = 0;
     }
 
-    public void push(Entry state, int action, int reward, Entry nextState, boolean done) {
+    public void push(int[][] state, int[] action, double[] reward, int[][][] nextState, boolean[] done) {
         Experience experience = new Experience(state, action, reward, nextState, done);
         buffer[numOfBuffer] = experience;
         numOfBuffer++;

@@ -215,5 +215,9 @@ public class Map {
     public void setSpace(int x, int y) {
         this.map[y][x] = 0;
     }
+
+    public int[][] getMap() {
+        return map;
+    }
 }
 

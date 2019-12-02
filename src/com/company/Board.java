@@ -1,19 +1,18 @@
 package com.company;
 
 import ai.Ai;
-import ai.Ai3;
+import ai.Ai2;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import ai.Ai4;
 import map.Map;
 import map.MapS;
 import player.GreenPlayer;
@@ -31,11 +30,11 @@ public class Board extends JPanel implements KeyListener, ActionListener {
     Timer timer;
     int x = 0;
     int y = 0;
-    Ai3 ai_red = new Ai3();
+    Ai2 ai_red = new Ai2();
     Ai ai_green = new Ai();
     boolean finished = false;
 
-    public Board() throws FileNotFoundException {
+    public Board() throws IOException {
         this.setFocusable(true);
         this.addKeyListener(this);
         this.map = new Map("/lib/map.txt");
@@ -53,7 +52,7 @@ public class Board extends JPanel implements KeyListener, ActionListener {
 
     }
 
-    public Board(Map m) {
+    public Board(Map m) throws IOException {
         this.setFocusable(true);
         this.addKeyListener(this);
         this.map = m;
@@ -129,16 +128,36 @@ public class Board extends JPanel implements KeyListener, ActionListener {
                 if (!this.green.goable(this.map)) {
                     System.out.println("Do Thang");
                     this.finished = true;
+                    try {
+                        this.ai_red.model.save_model();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        this.ai_red.model.backup_model();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     this.changeTurn();
                 }
             } else if (this.red.getTurn()) {
                 Long T = System.nanoTime();
-                this.red.move(this.ai_red.findDirection(new MapS(this.map), this.red.getX(), this.red.getY(), this.green.getX(), this.green.getY()));
+                this.red.move(this.ai_red.findDirection(new Map(this.map), this.red.getX(), this.red.getY(), this.green.getX(), this.green.getY()));
                 this.map.setRed(this.red.getX(), this.red.getY());
                 if (!this.red.goable(this.map)) {
                     System.out.println("Xanh Thang");
                     this.finished = true;
+                    try {
+                        this.ai_red.model.save_model();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        this.ai_red.model.backup_model();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     this.changeTurn();
                 }

@@ -1,13 +1,12 @@
 package com.company;
 
 import ai.Ai;
-import ai.Ai3;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import ai.Ai2;
+
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Random;
 
-import ai.Ai4;
 import map.Map;
 import map.MapS;
 import player.GreenPlayer;
@@ -24,7 +23,7 @@ public class Parameter {
     private GreenPlayer green;
     int x = 0;
     int y = 0;
-    private Ai3 ai_red;
+    private Ai2 ai_red;
     private Ai ai_green;
     private boolean finished = false;
     private int redCount = 0;
@@ -43,9 +42,9 @@ public class Parameter {
 
     }
 
-    public Parameter(Map m, int [] para) {
+    public Parameter(Map m, int [] para) throws IOException {
         this.ai_green = new Ai();
-        this.ai_red = new Ai3();
+        this.ai_red = new Ai2();
         this.map = m;
         this.red = new RedPlayer(14, 14, this.map);
         this.green = new GreenPlayer(0, 0, this.map);
@@ -75,7 +74,7 @@ public class Parameter {
     }
 
 
-    public int play() {
+    public int play() throws IOException {
         while (!this.finished) {
             if (this.green.getTurn()) {
                 Long T = System.nanoTime();
@@ -84,15 +83,19 @@ public class Parameter {
                 if (!this.green.goable(this.map)) {
                     this.redCount++;
                     this.finished = true;
+                    this.ai_red.model.save_model();
+                    this.ai_red.model.backup_model();
                 } else {
                     this.changeTurn();
                 }
             } else if (this.red.getTurn()) {
                 Long T = System.nanoTime();
-                this.red.move(this.ai_red.findDirection(new MapS(this.map), this.red.getX(), this.red.getY(), this.green.getX(), this.green.getY()));
+                this.red.move(this.ai_red.findDirection(new Map(this.map), this.red.getX(), this.red.getY(), this.green.getX(), this.green.getY()));
                 this.map.setRed(this.red.getX(), this.red.getY());
                 if (!this.red.goable(this.map)) {
                     this.finished = true;
+                    this.ai_red.model.save_model();
+                    this.ai_red.model.backup_model();
                 } else {
                     this.changeTurn();
                 }

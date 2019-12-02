@@ -2,13 +2,14 @@ package com.company;
 
 import java.awt.Component;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Main {
     public Main() {
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        int mode = 0;
+    public static void main(String[] args) throws IOException {
+        int mode = 1;
         if(mode == 1) {
             Frame jf = new Frame("AI");
             jf.add(new PN(jf));
@@ -53,7 +54,7 @@ public class Main {
             parameter[0] = 31;
             parameter[1] = 11;
             int max = 0;
-            while (count < 100) {
+            while (count < 10) {
                 NewMap map = new NewMap();
                 Parameter game = new Parameter(map.getMap(), parameter);
                 redWin += game.play();

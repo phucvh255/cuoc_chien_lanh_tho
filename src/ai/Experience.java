@@ -1,27 +1,39 @@
 package ai;
 
-public class Experience {
-    protected Entry state;
-    protected int action;
-    protected int[] reward;
-    protected Entry nextState;
-    protected boolean done;
+import map.Map;
 
-    public Experience(Entry state, int action, int reward, Entry nextState, boolean done) {
+public class Experience {
+    int[][] state;
+    int[] actions;
+    double[] rewards;
+    int[][][] nextStates;
+    boolean[] done;
+    int numOfNextState;
+
+
+    public Experience(int[][] state, int[] actions, double[] rewards, int[][][] nextStates, boolean[] done) {
         this.state = state;
-        this.action = action;
-        this.reward = new int[1];
-        this.reward[0] = reward;
-        this.nextState = nextState;
-        this.done = done;
+        for (int action : actions)
+            if (action != -1)
+                numOfNextState++;
+        this.actions = new int[numOfNextState];
+        this.rewards = new double[]{-10000, -10000, -10000};
+        this.nextStates = new int[numOfNextState][15][15];
+        this.done = new boolean[numOfNextState];
+        for(int i = 0; i < numOfNextState; i++) {
+            this.actions[i] = actions[i];
+            this.rewards[i] = rewards[i];
+            this.nextStates[i] = nextStates[i];
+            this.done[i] = done[i];
+        }
     }
 
     public Experience(Experience exp) {
         this.state = exp.state;
-        this.action = exp.action;
-        this.reward = new int[1];
-        this.reward[0] = exp.reward[0];
-        this.nextState = exp.nextState;
+        this.numOfNextState = exp.numOfNextState;
+        this.actions = exp.actions;
+        this.rewards = exp.rewards;
+        this.nextStates = exp.nextStates;
         this.done = exp.done;
     }
 }

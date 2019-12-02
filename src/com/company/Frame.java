@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import map.Map;
@@ -32,7 +33,7 @@ public class Frame extends JFrame implements ActionListener {
         this.card.show(this.mainpn, "map");
     }
 
-    public void play() throws FileNotFoundException {
+    public void play() throws IOException {
         this.board = new Board();
         this.mainpn.add("play", this.board);
         this.addKeyListener(this.board);
@@ -40,7 +41,7 @@ public class Frame extends JFrame implements ActionListener {
         this.card.show(this.mainpn, "play");
     }
 
-    public void play(Map map) {
+    public void play(Map map) throws IOException {
         this.board = new Board(map);
         this.mainpn.add("play1", this.board);
         this.addKeyListener(this.board);

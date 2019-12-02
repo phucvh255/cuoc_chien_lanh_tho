@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.MouseListener;
+import java.io.IOException;
 import java.util.Random;
 import javax.swing.JPanel;
 
@@ -86,7 +87,11 @@ public class Panel extends JPanel implements MouseListener
     public void mousePressed(final MouseEvent arg0) {
         if (arg0.getSource() == this.butok) {
             final Map map = new Map(this.getMap());
-            this.jf.play(map);
+            try {
+                this.jf.play(map);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 //
