@@ -80,7 +80,7 @@ public class Parameter {
         while (!this.finished) {
             if (this.green.getTurn()) {
                 Long T = System.nanoTime();
-                this.green.move(this.ai_green.findDirection(new MapS(this.map), this.green.getX(), this.green.getY(), this.red.getX(), this.red.getY()));
+                this.green.move(this.ai_green.findDirection(new Map(this.map), this.green.getX(), this.green.getY(), this.red.getX(), this.red.getY()));
                 this.map.setGreen(this.green.getX(), this.green.getY());
                 if (!this.green.goable(this.map)) {
                     this.redCount++;

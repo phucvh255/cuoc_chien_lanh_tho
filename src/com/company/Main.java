@@ -9,7 +9,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        int mode = 1;
+        int mode = 0;
         if(mode == 1) {
             Frame jf = new Frame("AI");
             jf.add(new PN(jf));

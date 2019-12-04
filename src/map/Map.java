@@ -130,7 +130,7 @@ public class Map {
 
     public Image getImage(int x, int y) {
         if (x < 15 && y < 15) {
-            int i = this.map[y][x];
+            int i = this.map[x][y];
             return i > 0 && i < 4 ? this.image[i] : null;
         } else {
             return null;
@@ -162,7 +162,7 @@ public class Map {
 
     public boolean isSpace(int x, int y) {
         if (x < 15 && y < 15 && x >= 0 && y >= 0) {
-            return this.map[y][x] == 0 || this.map[y][x] == 4;
+            return this.map[x][y] == 0 || this.map[x][y] == 4;
         } else {
             return false;
         }
@@ -170,50 +170,50 @@ public class Map {
 
     public boolean isSpaceAndNotTemp(int x, int y) {
         if (x < 15 && y < 15 && x >= 0 && y >= 0) {
-            return this.map[y][x] == 0;
+            return this.map[x][y] == 0;
         } else {
             return false;
         }
     }
 
     public void setTemp(int x, int y) {
-        this.map[y][x] = 4;
+        this.map[x][y] = 4;
     }
 
     public int getPrice(int x, int y) {
-        return this.prices[y][x];
+        return this.prices[x][y];
     }
 
     public boolean isWall(int x, int y) {
         if (x < 15 && y < 15 && x >= 0 && y >= 0) {
-            return this.map[y][x] == 3;
+            return this.map[x][y] == 3;
         } else {
             return true;
         }
     }
 
     public void setRed(int x, int y) {
-        this.map[y][x] = 2;
+        this.map[x][y] = 2;
     }
 
     public void setGreen(int x, int y) {
-        this.map[y][x] = 1;
+        this.map[x][y] = 1;
     }
 
     public void setMap(int x, int y) {
-        this.map[y][x] = 10;
+        this.map[x][y] = 10;
     }
 
     public boolean isReachable(int x, int y) {
         if (x < 15 && y < 15 && x >= 0 && y >= 0) {
-            return this.map[y][x] == 10;
+            return this.map[x][y] == 10;
         } else {
             return false;
         }
     }
 
     public void setSpace(int x, int y) {
-        this.map[y][x] = 0;
+        this.map[x][y] = 0;
     }
 
     public int[][] getMap() {

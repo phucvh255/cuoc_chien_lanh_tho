@@ -2,7 +2,7 @@ package ai;
 
 import java.util.*;
 
-import map.MapS;
+import map.Map;
 
 public class Ai
 {
@@ -42,7 +42,7 @@ public class Ai
         }
     }
 
-    public int findDirection(final MapS map, final int x, final int y, final int xe, final int ye) {
+    public int findDirection(final Map map, final int x, final int y, final int xe, final int ye) {
         /**
          *Input:
          * map: bản đồ hiện tại
@@ -59,7 +59,7 @@ public class Ai
             return this.findPathV1(map, x, y);
         }
         // check xem bản đồ đã phân vùng chưa?
-        if (!this.enemyInside(new MapS(map), xe, ye, x, y)) {
+        if (!this.enemyInside(new Map(map), xe, ye, x, y)) {
             this.crack = true;
             // nếu đã phân vùng thì gọi hàm findPathV1, dùng BFS để tìm đường
             return this.findPathV1(map, x, y);
@@ -84,7 +84,7 @@ public class Ai
         return t;
     }
 
-    private int findPathV1(final MapS map, final int x, final int y) {
+    private int findPathV1(final Map map, final int x, final int y) {
         /**
          * Input:
          * map: bản đồ hiện tại
@@ -98,7 +98,7 @@ public class Ai
         int max = -1000;
         int dir = -1;
         if (map.isSpace(x - 1, y)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x - 1, y);
             final int temp = this.searchPath(m, x - 1, y, 12);
             if (temp > max) {
@@ -107,7 +107,7 @@ public class Ai
             }
         }
         if (map.isSpace(x + 1, y)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x + 1, y);
             final int temp = this.searchPath(m, x + 1, y, 12);
             if (temp > max) {
@@ -116,7 +116,7 @@ public class Ai
             }
         }
         if (map.isSpace(x, y - 1)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x, y - 1);
             final int temp = this.searchPath(m, x, y - 1, 12);
             if (temp > max) {
@@ -125,7 +125,7 @@ public class Ai
             }
         }
         if (map.isSpace(x, y + 1)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x, y + 1);
             final int temp = this.searchPath(m, x, y + 1, 12);
             if (temp > max) {
@@ -136,7 +136,7 @@ public class Ai
         return dir;
     }
 
-    private int searchPath(final MapS map, final int x, final int y, final int depth) {
+    private int searchPath(final Map map, final int x, final int y, final int depth) {
         /**
          * Input:
          * depth: độ sâu của cây tìm kiếm, ban đầu bằng 12
@@ -148,25 +148,25 @@ public class Ai
             return this.numberofegdes(map, x, y);
         }
         if (map.isSpace(x - 1, y)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x - 1, y);
             final int temp = this.searchPath(m, x - 1, y, depth - 1);
             t = (Math.max(t, temp));
         }
         if (map.isSpace(x + 1, y)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x + 1, y);
             final int temp = this.searchPath(m, x + 1, y, depth - 1);
             t = (Math.max(t, temp));
         }
         if (map.isSpace(x, y - 1)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x, y - 1);
             final int temp = this.searchPath(m, x, y - 1, depth - 1);
             t = (Math.max(t, temp));
         }
         if (map.isSpace(x, y + 1)) {
-            final MapS m = new MapS(map);
+            final Map m = new Map(map);
             m.setGreen(x, y + 1);
             final int temp = this.searchPath(m, x, y + 1, depth - 1);
             t = (Math.max(t, temp));
@@ -177,7 +177,7 @@ public class Ai
         return t;
     }
 
-    private int countEdgesAStep(final MapS map, final ArrayList<Point> arp) {
+    private int countEdgesAStep(final Map map, final ArrayList<Point> arp) {
         int count = 0;
         final ArrayList<Point> temp = new ArrayList<Point>();
         while (!arp.isEmpty()) {
@@ -209,7 +209,7 @@ public class Ai
         return count;
     }
 
-    private int luonggiacanh(final MapS map, final int x, final int y, final int xe, final int ye, final boolean myturn) {
+    private int luonggiacanh(final Map map, final int x, final int y, final int xe, final int ye, final boolean myturn) {
         int mysum = 0;
         int hissum = 0;
         final ArrayList<Point> me = new ArrayList<Point>();
@@ -226,7 +226,7 @@ public class Ai
         return mysum - hissum;
     }
 
-    private int numberofegdes(final MapS map, final int x, final int y) {
+    private int numberofegdes(final Map map, final int x, final int y) {
         /**
          * Input:
          * Output: điểm của 1 node lá
@@ -385,7 +385,7 @@ public class Ai
         return max;
     }
 
-    public int minimax(final MapS map, final int x, final int y, final int xe, final int ye) {
+    public int minimax(final Map map, final int x, final int y, final int xe, final int ye) {
         final int depth = 14;
         int direction = -1;
         int value = -80000;
@@ -395,7 +395,7 @@ public class Ai
         this.amountnode = 0;
         if (map.isSpace(x, y + 1)) {
             // giả lập 1 bản đồ mới từ bản đồ hiện tại
-            final MapS maptemp = new MapS(map);
+            final Map maptemp = new Map(map);
             maptemp.setGreen(x, y + 1);
             final int temp = this.minValue(maptemp, x, y + 1, xe, ye, depth - 1, alpha, beta);
             if (temp > value) {
@@ -404,7 +404,7 @@ public class Ai
             }
         }
         if (map.isSpace(x, y - 1)) {
-            final MapS maptemp = new MapS(map);
+            final Map maptemp = new Map(map);
             maptemp.setGreen(x, y - 1);
             final int temp = this.minValue(maptemp, x, y - 1, xe, ye, depth - 1, alpha, beta);
             if (temp > value) {
@@ -413,7 +413,7 @@ public class Ai
             }
         }
         if (map.isSpace(x + 1, y)) {
-            final MapS maptemp = new MapS(map);
+            final Map maptemp = new Map(map);
             maptemp.setGreen(x + 1, y);
             final int temp = this.minValue(maptemp, x + 1, y, xe, ye, depth - 1, alpha, beta);
             if (temp > value) {
@@ -422,7 +422,7 @@ public class Ai
             }
         }
         if (map.isSpace(x - 1, y)) {
-            final MapS maptemp = new MapS(map);
+            final Map maptemp = new Map(map);
             maptemp.setGreen(x - 1, y);
             final int temp = this.minValue(maptemp, x - 1, y, xe, ye, depth - 1, alpha, beta);
             if (temp > value) {
@@ -434,13 +434,13 @@ public class Ai
         return direction;
     }
 
-    private int maxValue(final MapS map, final int x, final int y, final int xe, final int ye, final int depth, int alpha, final int beta) {
+    private int maxValue(final Map map, final int x, final int y, final int xe, final int ye, final int depth, int alpha, final int beta) {
         ++this.amountnode;
         int max = -80000;
         if (this.crack || this.enemyInside(map, xe, ye, x, y)) {
             if (depth > 0) {
                 if (map.isSpace(x + 1, y)) {
-                    final MapS maptemp = new MapS(map);
+                    final Map maptemp = new Map(map);
                     maptemp.setGreen(x + 1, y);
                     final int temp = this.minValue(maptemp, x + 1, y, xe, ye, depth - 1, alpha, beta);
                     if (temp > max) {
@@ -456,7 +456,7 @@ public class Ai
                     }
                 }
                 if (map.isSpace(x - 1, y)) {
-                    final MapS maptemp = new MapS(map);
+                    final Map maptemp = new Map(map);
                     maptemp.setGreen(x - 1, y);
                     final int temp = this.minValue(maptemp, x - 1, y, xe, ye, depth - 1, alpha, beta);
                     if (temp > max) {
@@ -472,7 +472,7 @@ public class Ai
                     }
                 }
                 if (map.isSpace(x, y + 1)) {
-                    final MapS maptemp = new MapS(map);
+                    final Map maptemp = new Map(map);
                     maptemp.setGreen(x, y + 1);
                     final int temp = this.minValue(maptemp, x, y + 1, xe, ye, depth - 1, alpha, beta);
                     if (temp > max) {
@@ -488,7 +488,7 @@ public class Ai
                     }
                 }
                 if (map.isSpace(x, y - 1)) {
-                    final MapS maptemp = new MapS(map);
+                    final Map maptemp = new Map(map);
                     maptemp.setGreen(x, y - 1);
                     final int temp = this.minValue(maptemp, x, y - 1, xe, ye, depth - 1, alpha, beta);
                     if (temp > max) {
@@ -505,26 +505,26 @@ public class Ai
                 }
             }
             else {
-                max = 31 * this.luonggia(new MapS(map), x, y, xe, ye, true) + 11 * this.luonggiacanh(new MapS(map), x, y, xe, ye, true);
+                max = 31 * this.luonggia(new Map(map), x, y, xe, ye, true) + 11 * this.luonggiacanh(new Map(map), x, y, xe, ye, true);
             }
             if (max == -80000) {
                 max = -40000 - depth;
             }
             return max;
         }
-        final int t = 31 * this.luonggiaOutside(new MapS(map), x, y, xe, ye) + 11 * this.luonggiacanh(new MapS(map), x, y, xe, ye, true);
+        final int t = 31 * this.luonggiaOutside(new Map(map), x, y, xe, ye) + 11 * this.luonggiacanh(new Map(map), x, y, xe, ye, true);
         if (t > 1 || t < -1) {
             return t * 5;
         }
         return t;
     }
 
-    private int minValue(final MapS map, final int x, final int y, final int xe, final int ye, final int depth, final int alpha, int beta) {
+    private int minValue(final Map map, final int x, final int y, final int xe, final int ye, final int depth, final int alpha, int beta) {
         ++this.amountnode;
         int min = 80000;
         if (this.crack || this.enemyInside(map, xe, ye, x, y)) {
             if (map.isSpace(xe + 1, ye)) {
-                final MapS maptemp = new MapS(map);
+                final Map maptemp = new Map(map);
                 maptemp.setRed(xe + 1, ye);
                 final int temp = this.maxValue(maptemp, x, y, xe + 1, ye, depth - 1, alpha, beta);
                 if (temp < min) {
@@ -538,7 +538,7 @@ public class Ai
                 }
             }
             if (map.isSpace(xe - 1, ye)) {
-                final MapS maptemp = new MapS(map);
+                final Map maptemp = new Map(map);
                 maptemp.setRed(xe - 1, ye);
                 final int temp = this.maxValue(maptemp, x, y, xe - 1, ye, depth - 1, alpha, beta);
                 if (temp < min) {
@@ -552,7 +552,7 @@ public class Ai
                 }
             }
             if (map.isSpace(xe, ye + 1)) {
-                final MapS maptemp = new MapS(map);
+                final Map maptemp = new Map(map);
                 maptemp.setRed(xe, ye + 1);
                 final int temp = this.maxValue(maptemp, x, y, xe, ye + 1, depth - 1, alpha, beta);
                 if (temp < min) {
@@ -566,7 +566,7 @@ public class Ai
                 }
             }
             if (map.isSpace(xe, ye - 1)) {
-                final MapS maptemp = new MapS(map);
+                final Map maptemp = new Map(map);
                 maptemp.setRed(xe, ye - 1);
                 final int temp = this.maxValue(maptemp, x, y, xe, ye - 1, depth - 1, alpha, beta);
                 if (temp < min) {
@@ -584,7 +584,7 @@ public class Ai
             }
             return min;
         }
-        final int t = 31 * this.luonggiaOutside(new MapS(map), x, y, xe, ye) + 11 * this.luonggiacanh(new MapS(map), x, y, xe, ye, false);
+        final int t = 31 * this.luonggiaOutside(new Map(map), x, y, xe, ye) + 11 * this.luonggiacanh(new Map(map), x, y, xe, ye, false);
         if (t > 1 || t < -1) {
             return t * 5;
         }
@@ -608,7 +608,7 @@ public class Ai
         return 0;
     }
 
-    private int computeHash(final MapS map, final int x, final int y, final int xe, final int ye) {
+    private int computeHash(final Map map, final int x, final int y, final int xe, final int ye) {
         /**
          * hàm băm zobrist. Giả sử map của game có kích
          * thước i*j, mỗi ô trong map có thể có n trạng
@@ -627,7 +627,7 @@ public class Ai
                 if (!map.isSpace(i, j)) {
                     // dùng hàm indexing trả về vị trí của phần tử
                     // tương ứng trong mảng zobristTable
-                    int piece = indexing(map.map[i * 15 + j]);
+                    int piece = indexing(map.getMap()[i][j]);
                     // vị trí của 2 xe hiện tại
                     if (i == x && j == y)
                         piece = 6;
@@ -641,7 +641,7 @@ public class Ai
         return h;
     }
 
-    private int luonggiaOutside(final MapS m, final int x, final int y, final int xe, final int ye) {
+    private int luonggiaOutside(final Map m, final int x, final int y, final int xe, final int ye) {
         int mysum = 0;
         int hissum = 0;
         int black = 0;
@@ -691,7 +691,7 @@ public class Ai
         return mysum - hissum;
     }
 
-    public int luonggia(final MapS map, final int x, final int y, final int xe, final int ye, final boolean ismyturn) {
+    public int luonggia(final Map map, final int x, final int y, final int xe, final int ye, final boolean ismyturn) {
         final ArrayList<Point> green = new ArrayList<Point>();
         final ArrayList<Point> red = new ArrayList<Point>();
         green.add(new Point(x, y));
@@ -720,7 +720,7 @@ public class Ai
         return sumgreen - sumred;
     }
 
-    private int greenGo(final ArrayList<Point> green, final MapS map) {
+    private int greenGo(final ArrayList<Point> green, final Map map) {
         final ArrayList<Point> greentemp = new ArrayList<Point>();
         int sumgreen = 0;
         while (!green.isEmpty()) {
@@ -755,7 +755,7 @@ public class Ai
         return sumgreen;
     }
 
-    private int redGo(final ArrayList<Point> red, final MapS map) {
+    private int redGo(final ArrayList<Point> red, final Map map) {
         final ArrayList<Point> redtemp = new ArrayList<Point>();
         int sumred = 0;
         while (!red.isEmpty()) {
@@ -790,12 +790,12 @@ public class Ai
         return sumred;
     }
 
-    private boolean enemyInside(final MapS m, final int xg, final int yg, final int xr, final int yr) {
+    private boolean enemyInside(final Map m, final int xg, final int yg, final int xr, final int yr) {
         /**
          *Check xem đối thủ có ở vùng tìm kiếm hay không
          * (bản đồ đã phân vùng hay chưa)
          * Sử dụng tìm kiếm theo chiều rộng */
-        final MapS map = new MapS(m);
+        final Map map = new Map(m);
         final Queue<Point> queue = new LinkedList<Point>();
         queue.add(new Point(xr, yr));
         while (!queue.isEmpty()) {

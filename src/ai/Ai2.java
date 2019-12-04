@@ -35,7 +35,7 @@ public class Ai2 {
         parameter[1] = 11;
         this.gamma = (float) 0.95;
         this.learningRate = (float) 0.001;
-        String filePath = "G:/Project/java/CCLT/src/ai/MyComputationGraph2.model";
+        String filePath = "MyComputationGraph.zip";
         File f = new File(filePath);
         if(f.exists()) {
             this.model = new Model2(1, 3, learningRate, filePath);

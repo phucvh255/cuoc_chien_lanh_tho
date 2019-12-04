@@ -42,28 +42,40 @@ public class Model2 {
                 .addInputs("input")
                 .layer(0, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
                         .nIn(inputDim)
-                        .nOut(32)
+                        .nOut(64)
                         .build(), "input")
                 .layer(1, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
-                        .nIn(32)
+                        .nIn(64)
                         .nOut(64)
                         .build(), "0")
                 .layer(2, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
                         .nIn(64)
                         .nOut(64)
                         .build(), "1")
-                .layer(3, new SubsamplingLayer.Builder()
-                        .poolingType(SubsamplingLayer.PoolingType.MAX).kernelSize(3, 3)
-                        .stride(2, 2).build(), "2")
-                .layer(4, new DenseLayer.Builder().activation(Activation.RELU)
-                        .nOut(224)
+//                .layer(3, new SubsamplingLayer.Builder()
+//                        .poolingType(SubsamplingLayer.PoolingType.MAX).kernelSize(3, 3)
+//                        .stride(2, 2).build(), "2")
+                .layer(3, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
+                        .nIn(64)
+                        .nOut(64)
+                        .build(), "2")
+                .layer(4, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
+                        .nIn(64)
+                        .nOut(64)
                         .build(), "3")
-                .layer(5, new OutputLayer.Builder()
+                .layer(5, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
+                        .nIn(64)
+                        .nOut(64)
+                        .build(), "4")
+                .layer(6, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nOut(224)
+                        .build(), "5")
+                .layer(7, new OutputLayer.Builder()
                         .nOut(numOfLabels)
                         .activation(Activation.SOFTMAX)
                         .lossFunction(LossFunctions.LossFunction.MSE)
-                        .build(), "4")
-                .setOutputs("5")
+                        .build(), "6")
+                .setOutputs("7")
                 .setInputTypes(InputType.convolutional(15, 15, 1))
                 .build();
         net = new ComputationGraph(config);
@@ -88,14 +100,14 @@ public class Model2 {
     }
 
     public void save_model() throws IOException {
-        File locationToSave = new File("G:/Project/java/CCLT/src/ai/MyComputationGraph2.zip");
+        File locationToSave = new File("MyComputationGraph.zip");
         net.save(locationToSave, true);
     }
 
     public void backup_model(int count) throws IOException {
         if(count % 10 == 0 && count != 0){
             int numOfBackUp = count / 10;
-            String fileName = "G:/Project/java/CCLT/src/ai/MyComputationGraphBackUp" + Integer.toString(numOfBackUp) + ".zip";
+            String fileName = "MyComputationGraphBackUp" + Integer.toString(numOfBackUp) + ".zip";
             File locationToSave = new File(fileName);
             net.save(locationToSave, true);
         }

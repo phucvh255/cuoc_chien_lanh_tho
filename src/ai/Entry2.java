@@ -1,9 +1,10 @@
 package ai;
 
+import map.Map;
 import map.MapS;
 
 public class Entry2 {
-    private MapS map;
+    private Map map;
     private int x;
     private int y;
     private int xe;
@@ -15,8 +16,8 @@ public class Entry2 {
     private int lowerBound;
     private int upperBound;
 
-    public Entry2(MapS m, int x, int y, int xe, int ye, int depth, int bestValue, int hashValue, boolean myTurn, int lowerBound, int upperBound) {
-        this.map = new MapS(m);
+    public Entry2(Map m, int x, int y, int xe, int ye, int depth, int bestValue, int hashValue, boolean myTurn, int lowerBound, int upperBound) {
+        this.map = new Map(m);
         this.x = x;
         this.y = y;
         this.xe = xe;
