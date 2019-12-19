@@ -1,5 +1,6 @@
 package ai;
 
+import map.Map;
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.ComputationGraphConfiguration;
 import org.deeplearning4j.nn.conf.ConvolutionMode;
@@ -59,23 +60,15 @@ public class Model2 {
                         .nIn(64)
                         .nOut(64)
                         .build(), "2")
-                .layer(4, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
-                        .nIn(64)
-                        .nOut(64)
+                .layer(4, new DenseLayer.Builder().activation(Activation.RELU)
+                        .nOut(225)
                         .build(), "3")
-                .layer(5, new ConvolutionLayer.Builder(new int[]{5, 5}, new int[]{1, 1}, new int[]{0, 0})
-                        .nIn(64)
-                        .nOut(64)
-                        .build(), "4")
-                .layer(6, new DenseLayer.Builder().activation(Activation.RELU)
-                        .nOut(224)
-                        .build(), "5")
-                .layer(7, new OutputLayer.Builder()
+                .layer(5, new OutputLayer.Builder()
                         .nOut(numOfLabels)
                         .activation(Activation.SOFTMAX)
                         .lossFunction(LossFunctions.LossFunction.MSE)
-                        .build(), "6")
-                .setOutputs("7")
+                        .build(), "4")
+                .setOutputs("5")
                 .setInputTypes(InputType.convolutional(15, 15, 1))
                 .build();
         net = new ComputationGraph(config);
@@ -88,7 +81,7 @@ public class Model2 {
     }
 
     public float[] forward(INDArray state) {
-        INDArray resultNDarray = net.output(false, state)[0].reshape(3);
+        INDArray resultNDarray = net.output(false, state)[0].reshape(4);
         float[] result = resultNDarray.data().asFloat();
         return result;
     }
@@ -100,14 +93,14 @@ public class Model2 {
     }
 
     public void save_model() throws IOException {
-        File locationToSave = new File("MyComputationGraph.zip");
+        File locationToSave = new File("G:/Project/java/CCLT/src/weight/MyComputationGraph.zip");
         net.save(locationToSave, true);
     }
 
     public void backup_model(int count) throws IOException {
         if(count % 10 == 0 && count != 0){
             int numOfBackUp = count / 10;
-            String fileName = "MyComputationGraphBackUp" + Integer.toString(numOfBackUp) + ".zip";
+            String fileName = "G:/Project/java/CCLT/src/weight/MyComputationGraphBackUp" + Integer.toString(numOfBackUp) + ".zip";
             File locationToSave = new File(fileName);
             net.save(locationToSave, true);
         }

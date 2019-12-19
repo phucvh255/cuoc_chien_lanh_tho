@@ -5,19 +5,20 @@ import map.Map;
 public class Experience {
     int[][] state;
     int[] actions;
-    double[] rewards;
+    float[] rewards;
     int[][][] nextStates;
     boolean[] done;
     int numOfNextState;
 
 
-    public Experience(int[][] state, int[] actions, double[] rewards, int[][][] nextStates, boolean[] done) {
+    public Experience(int[][] state, int[] actions, float[] rewards, int[][][] nextStates, boolean[] done) {
         this.state = state;
-        for (int action : actions)
-            if (action != -1)
-                numOfNextState++;
+//        for (int action : actions)
+//            if (action != -1)
+//                numOfNextState++;
+        this.numOfNextState = 4;
         this.actions = new int[numOfNextState];
-        this.rewards = new double[]{-10000, -10000, -10000};
+        this.rewards = new float[]{-10000, -10000, -10000, -10000};
         this.nextStates = new int[numOfNextState][15][15];
         this.done = new boolean[numOfNextState];
         for(int i = 0; i < numOfNextState; i++) {

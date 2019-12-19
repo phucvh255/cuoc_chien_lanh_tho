@@ -21,9 +21,11 @@ public class Ai2 {
     private int[] parameter;
     private float learningRate;
     private float gamma;
+    private int bufferSize;
     private Buffer replayBuffer;
     private Experience lastExp;
     private int lastActionIndex;
+    private boolean useTargetNet;
     public Model2 model;
 
     public Ai2() throws IOException {
@@ -33,15 +35,17 @@ public class Ai2 {
         parameter = new int[2];
         parameter[0] = 31;
         parameter[1] = 11;
-        this.gamma = (float) 0.95;
+        this.gamma = (float) 0.9;
         this.learningRate = (float) 0.001;
-        String filePath = "MyComputationGraph.zip";
+        String filePath = "G:/Project/java/CCLT/src/weight/MyComputationGraph.zip";
         File f = new File(filePath);
         if(f.exists()) {
-            this.model = new Model2(1, 3, learningRate, filePath);
+            this.model = new Model2(1, 4, learningRate, filePath);
         }
-        else this.model = new Model2(1, 3, learningRate);
-//        this.replayBuffer = new Buffer(bufferSize);
+        else this.model = new Model2(1, 4, learningRate);
+        bufferSize = 50000;
+        this.replayBuffer = new Buffer(bufferSize);
+        this.useTargetNet = false;
     }
 
     public int findDirection(final Map map, final int x, final int y, final int xe, final int ye) {
@@ -54,19 +58,26 @@ public class Ai2 {
          * ye: hoành độ xe xanh hiện tại
          *Output: direction tương ứng với hướng cần di chuyển
          */
+        long startTime = System.currentTimeMillis();
         if (!map.isSpace(x - 1, y) && !map.isSpace(x + 1, y) && !map.isSpace(x, y + 1) && !map.isSpace(x, y - 1)) {
             return -1;
         }
+        if(useTargetNet) {
+            learn(map, x, y, xe, ye);
+        }
         if (this.crack) {
+            useTargetNet = false;
             return this.findPathV1(map, x, y);
         }
         // check xem bản đồ đã phân vùng chưa?
         if (!this.enemyInside(new Map(map), xe, ye, x, y)) {
             this.crack = true;
+            useTargetNet = false;
             // nếu đã phân vùng thì gọi hàm findPathV1, dùng BFS để tìm đường
             return this.findPathV1(map, x, y);
         }
         // nếu chưa thì sử dụng alpha-beta để tìm đường
+        useTargetNet = true;
         final int t = this.train(map, x, y, xe, ye);
         // nếu alpha-beta không tìm được đường thì trả về đường đi là ô trống bất kì xung quanh
         if (t < 0) {
@@ -83,6 +94,9 @@ public class Ai2 {
                 return 0;
             }
         }
+//        long endTime = System.currentTimeMillis();
+//        long time = endTime - startTime;
+//        System.out.println(time);
         return t;
     }
 
@@ -144,7 +158,7 @@ public class Ai2 {
          * depth: độ sâu của cây tìm kiếm, ban đầu bằng 12
          * Output: điểm của node cần đáng giá
          * Đánh giá điểm cho từng node trong cây tìm kiếm
-         * Bằng giải thuật tìm kiếm theo chiều rộng*/
+         * Bằng giải thuật tìm kiếm theo chiều sâu*/
         int t = -999;
         if (depth <= 0) {
             return this.numberofegdes(map, x, y);
@@ -338,104 +352,6 @@ public class Ai2 {
         return max;
     }
 
-    private int enemy_inside_evaluate(final Map map, final int x, final int y, final int xe, final int ye, final boolean myturn) {
-        /**
-         * input: trạng thái bàn cờ, thứ tự lượt đi
-         * output: tính số ô mà xe đỏ đi được - số ô mà xe xanh đi được
-         * Hàm lượng giá trong trường hợp thuật toán chạy đến độ sâu
-         * xác định nhưng map chưa phân vùng*/
-        final ArrayList<Point> red = new ArrayList<Point>();
-        final ArrayList<Point> green = new ArrayList<Point>();
-        red.add(new Point(x, y));
-        green.add(new Point(xe, ye));
-        int sumred = 0;
-        int sumgreen = 0;
-        if (!this.crack) {
-            if (myturn) {
-                while (!red.isEmpty() || !green.isEmpty()) {
-                    sumred += this.redGo(red, map);
-                    sumgreen += this.greenGo(green, map);
-                }
-            } else {
-                while (!red.isEmpty() || !green.isEmpty()) {
-                    sumgreen += this.greenGo(green, map);
-                    sumred += this.redGo(red, map);
-                }
-            }
-        }
-        return sumred - sumgreen;
-    }
-
-    private int redGo(final ArrayList<Point> red, final Map map) {
-        /**
-         * Đếm và đánh dấu những ô xe xanh có thể đi từ vị trí hiện tại*/
-        final ArrayList<Point> redtemp = new ArrayList<Point>();
-        int sumred = 0;
-        while (!red.isEmpty()) {
-            final Point point = red.get(0);
-            final int x = point.x;
-            final int y = point.y;
-            if (map.isSpace(x + 1, y)) {
-                ++sumred;
-                map.setRed(x + 1, y);
-                redtemp.add(new Point(x + 1, y));
-            }
-            if (map.isSpace(x - 1, y)) {
-                ++sumred;
-                map.setRed(x - 1, y);
-                redtemp.add(new Point(x - 1, y));
-            }
-            if (map.isSpace(x, y + 1)) {
-                ++sumred;
-                map.setRed(x, y + 1);
-                redtemp.add(new Point(x, y + 1));
-            }
-            if (map.isSpace(x, y - 1)) {
-                ++sumred;
-                map.setRed(x, y - 1);
-                redtemp.add(new Point(x, y - 1));
-            }
-            red.remove(0);
-        }
-        red.addAll(redtemp);
-        return sumred;
-    }
-
-    private int greenGo(final ArrayList<Point> green, final Map map) {
-        /**
-         * Đếm và đánh dấu những ô xe đỏ có thể đi từ vị trí hiện tại*/
-        final ArrayList<Point> greentemp = new ArrayList<Point>();
-        int sumgreen = 0;
-        while (!green.isEmpty()) {
-            final Point point = green.get(0);
-            final int x = point.x;
-            final int y = point.y;
-            if (map.isSpace(x + 1, y)) {
-                ++sumgreen;
-                map.setGreen(x + 1, y);
-                greentemp.add(new Point(x + 1, y));
-            }
-            if (map.isSpace(x - 1, y)) {
-                ++sumgreen;
-                map.setGreen(x - 1, y);
-                greentemp.add(new Point(x - 1, y));
-            }
-            if (map.isSpace(x, y + 1)) {
-                ++sumgreen;
-                map.setGreen(x, y + 1);
-                greentemp.add(new Point(x, y + 1));
-            }
-            if (map.isSpace(x, y - 1)) {
-                ++sumgreen;
-                map.setGreen(x, y - 1);
-                greentemp.add(new Point(x, y - 1));
-            }
-            green.remove(0);
-        }
-        green.addAll(greentemp);
-        return sumgreen;
-    }
-
     private int enemy_outside_evaluate(final Map m, final int x, final int y, final int xe, final int ye) {
         /**
          * Lượng giá cho node lá bằng cách đếm
@@ -553,21 +469,21 @@ public class Ai2 {
 
     private Experience get_experience(final Map map, final int x, final int y, final int xe, final int ye) {
         int[][] state = get_state(map, x, y, xe, ye);
-        int[] actions = new int[]{-1, -1, -1};
-        double[] rewards = new double[3];
-        int[][][] nextStates = new int[3][15][15];
-        boolean[] done = new boolean[]{false, false, false};
-        int index = 0;
+        int[] actions = new int[]{-1, -1, -1, -1};
+        float[] rewards = new float[4];
+        int[][][] nextStates = new int[4][15][15];
+        boolean[] done = new boolean[]{false, false, false, false};
         if(map.isSpace(x + 1, y)) {
             Map m = new Map(map);
             int action = 3;
-            actions[index] = action;
+            actions[action] = action;
             m.setRed(x + 1, y);
             int[][] nextState = get_state(m, x + 1, y, xe, ye);
-            nextStates[index] = nextState;
-            double reward;
+            nextStates[action] = nextState;
+            float reward;
             if (enemyInside(m, x + 1, y, xe, ye)) {
 //                reward = enemy_inside_evaluate(m, x + 1, y, xe, ye, false);
+//                reward = m.amountSpacesAround(x + 1, y);
                 reward = 0;
             }
             else {
@@ -576,87 +492,93 @@ public class Ai2 {
                 if(evaluate > 0)
                     reward = 1;
                 else if(evaluate == 0)
-                    reward = 0.5;
+                    reward = (float) 0.5;
                  else reward = -1;
-                done[index] = true;
+//                reward =  20 * evaluate;
+                done[action] = true;
             }
-            rewards[index] = reward;
-            index++;
+            rewards[action] = reward;
         }
+
         if(map.isSpace(x - 1, y)) {
             Map m = new Map(map);
             int action = 1;
-            actions[index] = action;
+            actions[action] = action;
             m.setRed(x - 1, y);
             int[][] nextState = get_state(m, x - 1, y, xe, ye);
-            nextStates[index] = nextState;
-            double reward;
+            nextStates[action] = nextState;
+            float reward;
             if (enemyInside(m, x - 1, y, xe, ye)) {
 //                reward = enemy_inside_evaluate(m, x - 1, y, xe, ye, false);
+//                reward = m.amountSpacesAround(x - 1, y);
                 reward = 0;
             }
             else {
 //                System.out.println(1);
-                int evaluate = enemy_outside_evaluate(m, x + 1, y, xe, ye);
+                int evaluate = enemy_outside_evaluate(m, x - 1, y, xe, ye);
                 if(evaluate > 0)
                     reward = 1;
                 else if(evaluate == 0)
-                    reward = 0.5;
+                    reward = (float) 0.5;
                 else reward = -1;
-                done[index] = true;
+//                reward = 20 * evaluate;
+                done[action] = true;
             }
-            rewards[index] = reward;
-            index++;
+            rewards[action] = reward;
         }
+
         if(map.isSpace(x, y + 1)) {
             Map m = new Map(map);
             int action = 0;
-            actions[index] = action;
+            actions[action] = action;
             m.setRed(x, y + 1);
             int[][] nextState = get_state(m, x, y + 1, xe, ye);
-            nextStates[index] = nextState;
-            double reward;
+            nextStates[action] = nextState;
+            float reward;
             if (enemyInside(m, x, y + 1, xe, ye)) {
 //                reward = enemy_inside_evaluate(m, x, y + 1, xe, ye, false);
+//                reward = m.amountSpacesAround(x, y + 1);
                 reward = 0;
             }
             else {
 //                System.out.println(1);
-                int evaluate = enemy_outside_evaluate(m, x + 1, y, xe, ye);
+                int evaluate = enemy_outside_evaluate(m, x, y + 1, xe, ye);
                 if(evaluate > 0)
                     reward = 1;
                 else if(evaluate == 0)
-                    reward = 0.5;
+                    reward = (float) 0.5;
                 else reward = -1;
-                done[index] = true;
+//                reward = 20 * evaluate;
+                done[action] = true;
             }
-            rewards[index] = reward;
-            index++;
+            rewards[action] = reward;
         }
+
         if(map.isSpace(x, y - 1)) {
             Map m = new Map(map);
             int action = 2;
-            actions[index] = action;
+            actions[action] = action;
             m.setRed(x, y - 1);
             int[][] nextState = get_state(m, x, y - 1, xe, ye);
-            nextStates[index] = nextState;
-            double reward;
+            nextStates[action] = nextState;
+            float reward;
             if (enemyInside(m, x, y - 1, xe, ye)) {
 //                reward = enemy_inside_evaluate(m, x, y - 1, xe, ye, false);
+//                reward = m.amountSpacesAround(x, y - 1);
                 reward = 0;
             }
             else {
 //                System.out.println(1);
-                int evaluate = enemy_outside_evaluate(m, x + 1, y, xe, ye);
+                int evaluate = enemy_outside_evaluate(m, x, y - 1, xe, ye);
                 if(evaluate > 0)
                     reward = 1;
                 else if(evaluate == 0)
-                    reward = 0.5;
+                    reward = (float) 0.5;
                 else reward = -1;
-                done[index] = true;
+//                reward = 20 * evaluate;
+                done[action] = true;
             }
-            rewards[index] = reward;
-            index++;
+            rewards[action] = reward;
         }
         return new Experience(state, actions, rewards, nextStates, done);
     }
@@ -672,68 +594,66 @@ public class Ai2 {
             return map.isSpace(x + 1, y);
     }
 
-    public Map setMap(Map map, final int x, final int y, final int action) {
-        if(action == 0)
-            map.setRed(x, y + 1);
-        if(action == 1)
-            map.setRed(x - 1, y);
-        if(action == 2)
-            map.setRed(x, y - 1);
-        if(action == 3)
-            map.setRed(x + 1, y);
-        return map;
-    }
-
     public int make_move(final Map map, final int x, final int y, final int xe, final int ye) {
         Experience exp = get_experience(map, x, y, xe, ye);
-        float eps = (float) 0.2;
+        float eps = (float) 0.5;
         Random rd = new Random();
-        int actionIndex = -1;
-        int numOfNextState = exp.numOfNextState;
+//        int numOfNextState = exp.numOfNextState;
         float[] predict = model.forward(convert_matrix_to_ndarr(exp.state));
-        if (rd.nextInt(2) < eps) {
-            actionIndex = rd.nextInt(numOfNextState);
+        int action = -1;
+        System.out.println("predict" + Arrays.toString(predict));
+        if (rd.nextFloat() < eps) {
+            do
+                action = rd.nextInt(4);
+            while (!check_action(map, x, y, action));
 //            System.out.println(Integer.toString(amountnode) + ": random");
         }
         else {
-            float max = 0;
-            for(int i = 0; i < numOfNextState; i++) {
-                int act = exp.actions[i];
-                if(check_action(map, x, y, act)) {
-                    max = Math.max(max, predict[i]);
-                    actionIndex = i;
+            float max = -100000;
+            for(int i = 0; i < 4; i++) {
+                int action_temp = exp.actions[i];
+                if(check_action(map, x, y, action_temp) && action_temp != -1) {
+                    max = Math.max(max, predict[action_temp]);
+                    action = action_temp;
                 }
             }
 //            System.out.println(Integer.toString(amountnode) + ": " + Float.toString(predict[0]) + ", " + Float.toString(predict[1]) + ", " + Float.toString(predict[2]));
         }
         lastExp = new Experience(exp);
-        lastActionIndex = actionIndex;
-        return exp.actions[actionIndex];
+        lastActionIndex = action;
+        replayBuffer.push(exp);
+        return exp.actions[action];
     }
 
-    public int train(final Map map, final int x, final int y, final int xe, final int ye) {
-        if(amountnode != 0)
-            learn(map, x, y, xe, ye);
-        amountnode++;
+    private int train(final Map map, final int x, final int y, final int xe, final int ye) {
         return make_move(map, x, y, xe, ye);
     }
 
-    private void learn(final Map map, final int x, final int y, final int xe, final int ye) {
+    public void learn(final Map map, final int x, final int y, final int xe, final int ye) {
         Experience exp = new Experience(get_experience(map, x, y, xe, ye));
-        float[] lastPredict = model.forward(convert_matrix_to_ndarr(lastExp.state));
-        float reward = (float) lastExp.rewards[lastActionIndex];
-        float target;
-        float[] predict = model.forward(convert_matrix_to_ndarr(exp.state));
-        float max = -80000;
-        for(int i = 0; i < exp.numOfNextState; i++) {
-            int act = exp.actions[i];
-            if(check_action(map, x, y, act)) {
-                max = Math.max(max, predict[i]);
+        int numOfBuffer = Buffer.getNumOfBuffer();
+        int batchSize = Math.min(numOfBuffer, 10);
+//        System.out.println(Arrays.toString(exp.rewards));
+        Experience[] batch = replayBuffer.sample(batchSize);
+        batch[batchSize - 1] = new Experience(lastExp);
+        for(int i = 0; i < batchSize; i++) {
+            lastExp = batch[i];
+            float[] lastPredict = model.forward(convert_matrix_to_ndarr(lastExp.state));
+            float reward = (float) lastExp.rewards[lastActionIndex];
+            float target;
+            float[] predict = model.forward(convert_matrix_to_ndarr(exp.state));
+            float max = -80000;
+            for(int j = 0; j < exp.numOfNextState; j++) {
+                int act = exp.actions[j];
+                if(check_action(map, x, y, act)) {
+                    max = Math.max(max, predict[j]);
+                }
             }
+            target = reward + gamma * max;
+            lastPredict[lastActionIndex] = target;
+            System.out.println("target" + Arrays.toString(lastPredict));
+            model.fit(convert_matrix_to_ndarr(lastExp.state), convert_vector_to_ndarr(lastPredict));
         }
-        target = reward + gamma * max;
-        lastPredict[lastActionIndex] = target;
-        model.fit(convert_matrix_to_ndarr(lastExp.state), convert_vector_to_ndarr(lastPredict));
     }
 
     private INDArray convert_matrix_to_ndarr(int[][] state) {
@@ -751,7 +671,7 @@ public class Ai2 {
 
     private INDArray[] convert_vector_to_ndarr(float[] vector) {
         INDArray[] vectorNDarr = new INDArray[1];
-        vectorNDarr[0] = Nd4j.create(vector, new int[]{1, 3});
+        vectorNDarr[0] = Nd4j.create(vector, new int[]{1, 4});
         return vectorNDarr;
     }
 }
